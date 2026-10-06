@@ -5,490 +5,420 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Grace Songs Admin</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; }
 
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      background: #f7f5ff;
-      color: #211b35;
-      padding: 20px;
+      background: #f5f3ff;
+      color: #222;
+    }
+
+    header {
+      background: linear-gradient(135deg, #6d28d9, #9333ea);
+      color: white;
+      padding: 25px 18px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+    }
+
+    header p {
+      margin: 0;
     }
 
     .container {
       max-width: 900px;
-      margin: auto;
-    }
-
-    .header {
-      background: linear-gradient(135deg, #5b35b8, #7b4fd1);
-      color: white;
-      padding: 28px;
-      border-radius: 22px;
-      margin-bottom: 22px;
-    }
-
-    .header h1 {
-      font-size: 28px;
-      margin-bottom: 5px;
-    }
-
-    .header p {
-      opacity: 0.9;
+      margin: 25px auto;
+      padding: 0 15px;
     }
 
     .card {
       background: white;
-      border: 1px solid #e8e2f4;
-      border-radius: 20px;
       padding: 22px;
       margin-bottom: 20px;
-      box-shadow: 0 7px 25px rgba(50, 30, 90, 0.06);
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     }
 
-    .card h2 {
-      margin-bottom: 18px;
-      color: #51309f;
-      font-size: 21px;
+    h2 {
+      margin-top: 0;
+      color: #6d28d9;
     }
 
-    label {
-      display: block;
-      font-weight: bold;
-      font-size: 14px;
-      margin: 15px 0 7px;
-    }
-
-    input,
-    textarea,
-    select {
+    input, textarea, select {
       width: 100%;
-      padding: 13px;
-      border: 1px solid #ddd6ec;
-      border-radius: 11px;
+      padding: 12px;
+      margin: 7px 0 14px;
+      border: 1px solid #ddd;
+      border-radius: 9px;
       font-size: 15px;
-      outline: none;
-      background: white;
     }
 
     textarea {
-      min-height: 150px;
+      min-height: 180px;
       resize: vertical;
     }
 
-    input:focus,
-    textarea:focus,
-    select:focus {
-      border-color: #6b43c4;
-    }
-
-    .button {
-      border: none;
-      border-radius: 11px;
-      padding: 12px 18px;
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 11px 17px;
+      margin: 4px;
       cursor: pointer;
-      font-weight: bold;
       font-size: 14px;
-      margin-top: 18px;
     }
 
-    .save {
-      background: #633cc1;
+    .primary {
+      background: #6d28d9;
       color: white;
     }
 
-    .clear {
-      background: #eee9f8;
-      color: #5839a0;
-      margin-left: 7px;
+    .secondary {
+      background: #e9d5ff;
+      color: #581c87;
     }
 
-    .song-item {
-      border: 1px solid #e8e2f4;
-      border-radius: 15px;
-      padding: 16px;
-      margin-top: 12px;
+    .danger {
+      background: #dc2626;
+      color: white;
     }
 
-    .song-item h3 {
-      margin-bottom: 4px;
+    .logout {
+      background: white;
+      color: #6d28d9;
     }
 
-    .song-item p {
-      color: #777;
-      font-size: 13px;
-    }
-
-    .song-buttons {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .edit {
-      background: #eee9f8;
-      color: #5839a0;
-    }
-
-    .delete {
-      background: #fbeaea;
-      color: #b43a3a;
-    }
-
-    .notice {
-      background: #fff8e8;
-      border: 1px solid #f1dfae;
-      color: #735a20;
+    .song {
+      border: 1px solid #e5e7eb;
       padding: 15px;
-      border-radius: 13px;
-      font-size: 13px;
-      margin-bottom: 20px;
+      border-radius: 12px;
+      margin-bottom: 12px;
     }
 
-    .back {
-      display: inline-block;
-      color: #633cc1;
-      text-decoration: none;
-      font-weight: bold;
-      margin-bottom: 18px;
+    .song h3 {
+      margin: 0 0 5px;
     }
 
-    @media (max-width: 600px) {
-      body {
-        padding: 12px;
-      }
+    .song p {
+      margin: 5px 0;
+      color: #666;
+    }
 
-      .header,
-      .card {
-        padding: 18px;
-      }
+    #adminArea {
+      display: none;
+    }
 
-      .button {
-        width: 100%;
-        margin-left: 0;
-      }
-
-      .clear {
-        margin-left: 0;
-      }
-
-      .song-buttons {
-        flex-direction: column;
-      }
+    #message {
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: none;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="container">
+<header>
+  <h1>🎵 Grace Songs Admin</h1>
+  <p>Grace Of Christ Church • కృపా గీతాలు</p>
+</header>
 
-    <a class="back" href="index.html">
-      ← Back to Grace Songs
-    </a>
+<div class="container">
 
-    <div class="header">
-      <h1>Grace Songs Admin</h1>
-      <p>Grace Of Christ Church • కృపా గీతాలు</p>
-    </div>
+  <!-- LOGIN -->
+  <div class="card" id="loginArea">
+    <h2>Admin Login</h2>
 
-    <div class="notice">
-      ⚠️ This is the first dashboard version.
-      Your songs are currently stored only in this browser.
-      We will connect the dashboard to permanent online storage in the next step.
+    <input id="email" type="email" placeholder="Admin email">
+    <input id="password" type="password" placeholder="Password">
+
+    <button class="primary" onclick="login()">Login</button>
+
+    <p id="loginMessage"></p>
+  </div>
+
+  <!-- ADMIN -->
+  <div id="adminArea">
+
+    <div class="card">
+      <button class="logout" onclick="logout()">Logout</button>
     </div>
 
     <div class="card">
+      <h2 id="formTitle">Add New Song</h2>
 
-      <h2 id="formTitle">➕ Add New Song</h2>
+      <div id="message"></div>
 
-      <input type="hidden" id="songId">
+      <input id="title" placeholder="English Title">
 
-      <label>Song Title – English</label>
-      <input
-        type="text"
-        id="title"
-        placeholder="Example: My Worship Song"
-      >
+      <input id="teluguTitle" placeholder="Telugu Title">
 
-      <label>Song Title – Telugu</label>
-      <input
-        type="text"
-        id="telugu"
-        placeholder="ఉదాహరణ: నా ఆరాధన గీతం"
-      >
-
-      <label>Language</label>
       <select id="language">
-        <option>English + Telugu</option>
-        <option>English</option>
-        <option>Telugu</option>
+        <option value="English">English</option>
+        <option value="Telugu">Telugu</option>
+        <option value="Both">English + Telugu</option>
       </select>
 
-      <label>Category</label>
       <select id="category">
-        <option>Worship</option>
-        <option>Praise</option>
-        <option>Telugu</option>
-        <option>English</option>
-        <option>Christmas</option>
-        <option>Easter</option>
+        <option value="Worship">Worship</option>
+        <option value="Praise">Praise</option>
+        <option value="Christmas">Christmas</option>
+        <option value="Easter">Easter</option>
+        <option value="Other">Other</option>
       </select>
 
-      <label>Lyrics</label>
-      <textarea
-        id="lyrics"
-        placeholder="Paste your song lyrics here..."
-      ></textarea>
+      <textarea id="lyrics" placeholder="Enter song lyrics"></textarea>
 
-      <label>Optional YouTube / Audio Link</label>
-      <input
-        type="url"
-        id="media"
-        placeholder="https://..."
-      >
+      <input id="mediaUrl" placeholder="YouTube / Audio link (optional)">
 
-      <button class="button save" onclick="saveSong()">
-        Save Song
-      </button>
-
-      <button class="button clear" onclick="clearForm()">
-        Clear
-      </button>
-
+      <button class="primary" onclick="saveSong()">Save Song</button>
+      <button class="secondary" onclick="clearForm()">Clear</button>
     </div>
 
-
     <div class="card">
-
-      <h2>🎵 Your Songs</h2>
-
-      <div id="songList"></div>
-
+      <h2>My Songs</h2>
+      <div id="songList">Loading songs...</div>
     </div>
 
   </div>
+</div>
 
+<script>
+  const SUPABASE_URL = "https://kmjkuajktgydaduhlmvi.supabase.co";
 
-  <script>
+  const SUPABASE_KEY =
+    "sb_publishable_c5s5vbjKSzy_crPRu4zcVg_uXAK0GcK";
 
-    let songs = JSON.parse(
-      localStorage.getItem("graceSongsAdmin")
-    ) || [];
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
+  let editingId = null;
 
-    function saveSong() {
+  async function checkUser() {
+    const { data } = await supabaseClient.auth.getSession();
 
-      const id = document.getElementById("songId").value;
+    if (data.session) {
+      showAdmin();
+      loadSongs();
+    } else {
+      showLogin();
+    }
+  }
 
-      const song = {
-        id: id ? Number(id) : Date.now(),
+  function showLogin() {
+    document.getElementById("loginArea").style.display = "block";
+    document.getElementById("adminArea").style.display = "none";
+  }
 
-        title: document.getElementById("title").value.trim(),
+  function showAdmin() {
+    document.getElementById("loginArea").style.display = "none";
+    document.getElementById("adminArea").style.display = "block";
+  }
 
-        telugu: document.getElementById("telugu").value.trim(),
+  async function login() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
 
-        language: document.getElementById("language").value,
+    const msg = document.getElementById("loginMessage");
 
-        category: document.getElementById("category").value,
-
-        lyrics: document.getElementById("lyrics").value.trim(),
-
-        media: document.getElementById("media").value.trim()
-      };
-
-
-      if (!song.title || !song.lyrics) {
-
-        alert("Please enter the song title and lyrics.");
-
-        return;
-      }
-
-
-      const existingIndex = songs.findIndex(
-        item => item.id === song.id
-      );
-
-
-      if (existingIndex >= 0) {
-
-        songs[existingIndex] = song;
-
-      } else {
-
-        songs.push(song);
-
-      }
-
-
-      localStorage.setItem(
-        "graceSongsAdmin",
-        JSON.stringify(songs)
-      );
-
-
-      clearForm();
-
-      displaySongs();
-
-      alert("Song saved successfully!");
-
+    if (!email || !password) {
+      msg.textContent = "Please enter email and password.";
+      return;
     }
 
+    msg.textContent = "Logging in...";
 
-    function displaySongs() {
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
 
-      const list = document.getElementById("songList");
-
-
-      if (songs.length === 0) {
-
-        list.innerHTML = `
-          <p style="color:#777;">
-            No songs added yet.
-          </p>
-        `;
-
-        return;
-      }
-
-
-      list.innerHTML = songs.map(song => `
-
-        <div class="song-item">
-
-          <h3>${escapeHTML(song.title)}</h3>
-
-          <p>
-            ${escapeHTML(song.telugu || "")}
-            • ${escapeHTML(song.category)}
-          </p>
-
-          <div class="song-buttons">
-
-            <button
-              class="button edit"
-              onclick="editSong(${song.id})">
-              ✏️ Edit
-            </button>
-
-            <button
-              class="button delete"
-              onclick="deleteSong(${song.id})">
-              🗑️ Delete
-            </button>
-
-          </div>
-
-        </div>
-
-      `).join("");
-
+    if (error) {
+      msg.textContent = error.message;
+      return;
     }
 
+    msg.textContent = "";
+    showAdmin();
+    loadSongs();
+  }
 
-    function editSong(id) {
+  async function logout() {
+    await supabaseClient.auth.signOut();
+    clearForm();
+    showLogin();
+  }
 
-      const song = songs.find(
-        item => item.id === id
-      );
+  async function loadSongs() {
+    const list = document.getElementById("songList");
+    list.innerHTML = "Loading songs...";
 
-      if (!song) return;
+    const { data, error } = await supabaseClient
+      .from("songs")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-
-      document.getElementById("songId").value = song.id;
-
-      document.getElementById("title").value = song.title;
-
-      document.getElementById("telugu").value = song.telugu;
-
-      document.getElementById("language").value = song.language;
-
-      document.getElementById("category").value = song.category;
-
-      document.getElementById("lyrics").value = song.lyrics;
-
-      document.getElementById("media").value = song.media;
-
-
-      document.getElementById("formTitle").textContent =
-        "✏️ Edit Song";
-
-
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-
+    if (error) {
+      list.innerHTML = "Error loading songs: " + error.message;
+      return;
     }
 
-
-    function deleteSong(id) {
-
-      if (!confirm("Delete this song?")) {
-        return;
-      }
-
-
-      songs = songs.filter(
-        song => song.id !== id
-      );
-
-
-      localStorage.setItem(
-        "graceSongsAdmin",
-        JSON.stringify(songs)
-      );
-
-
-      displaySongs();
-
+    if (!data || data.length === 0) {
+      list.innerHTML = "No songs added yet.";
+      return;
     }
 
+    list.innerHTML = data.map(song => `
+      <div class="song">
+        <h3>${escapeHtml(song.title || "")}</h3>
+        <p>${escapeHtml(song.telugu_title || "")}</p>
+        <p>${escapeHtml(song.language || "")} • ${escapeHtml(song.category || "")}</p>
 
-    function clearForm() {
+        <button class="secondary"
+          onclick="editSong(${song.id})">
+          Edit
+        </button>
 
-      document.getElementById("songId").value = "";
+        <button class="danger"
+          onclick="deleteSong(${song.id})">
+          Delete
+        </button>
+      </div>
+    `).join("");
+  }
 
-      document.getElementById("title").value = "";
+  async function saveSong() {
+    const title = document.getElementById("title").value.trim();
+    const teluguTitle = document.getElementById("teluguTitle").value.trim();
+    const language = document.getElementById("language").value;
+    const category = document.getElementById("category").value;
+    const lyrics = document.getElementById("lyrics").value.trim();
+    const mediaUrl = document.getElementById("mediaUrl").value.trim();
 
-      document.getElementById("telugu").value = "";
+    const message = document.getElementById("message");
 
-      document.getElementById("language").value =
-        "English + Telugu";
-
-      document.getElementById("category").value =
-        "Worship";
-
-      document.getElementById("lyrics").value = "";
-
-      document.getElementById("media").value = "";
-
-      document.getElementById("formTitle").textContent =
-        "➕ Add New Song";
-
+    if (!title || !lyrics) {
+      showMessage("English title and lyrics are required.");
+      return;
     }
 
+    const songData = {
+      title: title,
+      telugu_title: teluguTitle,
+      language: language,
+      category: category,
+      lyrics: lyrics,
+      media_url: mediaUrl || null
+    };
 
-    function escapeHTML(text) {
+    let result;
 
-      const div = document.createElement("div");
-
-      div.textContent = text;
-
-      return div.innerHTML;
-
+    if (editingId) {
+      result = await supabaseClient
+        .from("songs")
+        .update(songData)
+        .eq("id", editingId);
+    } else {
+      result = await supabaseClient
+        .from("songs")
+        .insert(songData);
     }
 
+    if (result.error) {
+      showMessage("Error: " + result.error.message);
+      return;
+    }
 
-    displaySongs();
+    showMessage(editingId ? "Song updated successfully!" : "Song saved successfully!");
 
-  </script>
+    clearForm();
+    loadSongs();
+  }
+
+  async function editSong(id) {
+    const { data, error } = await supabaseClient
+      .from("songs")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) {
+      showMessage("Error: " + error.message);
+      return;
+    }
+
+    editingId = id;
+
+    document.getElementById("formTitle").textContent = "Edit Song";
+
+    document.getElementById("title").value = data.title || "";
+    document.getElementById("teluguTitle").value = data.telugu_title || "";
+    document.getElementById("language").value = data.language || "English";
+    document.getElementById("category").value = data.category || "Worship";
+    document.getElementById("lyrics").value = data.lyrics || "";
+    document.getElementById("mediaUrl").value = data.media_url || "";
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function deleteSong(id) {
+    if (!confirm("Delete this song?")) {
+      return;
+    }
+
+    const { error } = await supabaseClient
+      .from("songs")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      showMessage("Error: " + error.message);
+      return;
+    }
+
+    showMessage("Song deleted.");
+    loadSongs();
+  }
+
+  function clearForm() {
+    editingId = null;
+
+    document.getElementById("formTitle").textContent = "Add New Song";
+
+    document.getElementById("title").value = "";
+    document.getElementById("teluguTitle").value = "";
+    document.getElementById("language").value = "English";
+    document.getElementById("category").value = "Worship";
+    document.getElementById("lyrics").value = "";
+    document.getElementById("mediaUrl").value = "";
+  }
+
+  function showMessage(text) {
+    const message = document.getElementById("message");
+    message.textContent = text;
+    message.style.display = "block";
+  }
+
+  function escapeHtml(text) {
+    return String(text)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  checkUser();
+</script>
 
 </body>
 </html>
