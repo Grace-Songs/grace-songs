@@ -281,12 +281,7 @@
 
     displaySongs();
   }
-const params = new URLSearchParams(window.location.search);
-const songId = Number(params.get("song"));
 
-if (songId) {
-  showLyrics(songId);
-}
   function displaySongs() {
     const container = document.getElementById("songs");
     const searchText =
