@@ -266,7 +266,7 @@ status.textContent = "Connecting to database...";
       .order("created_at", { ascending: false });
 
     if (error) {
-      status.textContent = "Unable to load songs.";
+      status.textContent = "ERROR: " + error.message;
       console.error(error);
       return;
     }
