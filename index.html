@@ -281,7 +281,12 @@
 
     displaySongs();
   }
+const params = new URLSearchParams(window.location.search);
+const songId = Number(params.get("song"));
 
+if (songId) {
+  showLyrics(songId);
+}
   function displaySongs() {
     const container = document.getElementById("songs");
     const searchText =
@@ -393,7 +398,7 @@
 
     document.getElementById("lyricsModal").style.display = "block";
   }
-
+history.replaceState(null, "", "?song=" + id);
   function closeLyrics() {
     document.getElementById("lyricsModal").style.display = "none";
   }
