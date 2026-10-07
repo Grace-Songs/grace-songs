@@ -259,7 +259,7 @@
 
   async function loadSongs() {
     const status = document.getElementById("status");
-
+status.textContent = "Connecting to database...";
     const { data, error } = await supabaseClient
       .from("songs")
       .select("*")
