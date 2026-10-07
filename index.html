@@ -424,8 +424,22 @@ status.textContent = "Connecting to database...";
       closeLyrics();
     }
   };
+function checkSongLink() {
+  const songId = new URLSearchParams(window.location.search).get("song");
 
-  loadSongs();
+  if (!songId) return;
+
+  const id = Number(songId);
+
+  if (!Number.isFinite(id)) return;
+
+  const song = songs.find(s => s.id === id);
+
+  if (song) {
+    showLyrics(id);
+  }
+    
+  loadSongs().then(checkSongLink);
 </script>
 
 </body>
