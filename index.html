@@ -249,7 +249,7 @@
   const SUPABASE_KEY =
     "sb_publishable_c5s5vbjKSzy_crPRu4zcVg_uXAK0GcK";
 alert("Supabase script loaded");
-  const supabaseClient = window.supabase.createClient(
+  const supabaseClient = supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
   );
