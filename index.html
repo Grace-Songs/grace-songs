@@ -237,7 +237,8 @@
     <div id="modalTelugu"></div>
 
     <div class="lyrics" id="modalLyrics"></div>
-
+<div class="lyrics" id="modalEnglishLyrics"></div>
+    
     <div id="modalMedia"></div>
   </div>
 </div>
@@ -386,7 +387,8 @@ async function loadSongs() {
 
     document.getElementById("modalLyrics").textContent =
       song.lyrics || "";
-
+document.getElementById("modalEnglishLyrics").textContent =
+  song.english_lyrics || "";
     const media = document.getElementById("modalMedia");
 
     if (song.media_url) {
