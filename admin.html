@@ -176,7 +176,9 @@
 
       <textarea id="lyrics" placeholder="Enter song lyrics"></textarea>
 
-      <input id="mediaUrl" placeholder="YouTube / Audio link (optional)">
+<textarea id="englishLyrics" placeholder="English-letter lyrics (optional)"></textarea>
+
+<input id="mediaUrl" placeholder="YouTube / Audio link (optional)">
 
       <button class="primary" onclick="saveSong()">Save Song</button>
       <button class="secondary" onclick="clearForm()">Clear</button>
@@ -302,8 +304,8 @@
     const language = document.getElementById("language").value;
     const category = document.getElementById("category").value;
     const lyrics = document.getElementById("lyrics").value.trim();
-    const mediaUrl = document.getElementById("mediaUrl").value.trim();
-
+const englishLyrics = document.getElementById("englishLyrics").value.trim();
+const mediaUrl = document.getElementById("mediaUrl").value.trim();
     const message = document.getElementById("message");
 
     if (!title || !lyrics) {
@@ -317,7 +319,8 @@
       language: language,
       category: category,
       lyrics: lyrics,
-      media_url: mediaUrl || null
+english_lyrics: englishLyrics || null,
+media_url: mediaUrl || null
     };
 
     let result;
@@ -365,8 +368,8 @@
     document.getElementById("language").value = data.language || "English";
     document.getElementById("category").value = data.category || "Worship";
     document.getElementById("lyrics").value = data.lyrics || "";
-    document.getElementById("mediaUrl").value = data.media_url || "";
-
+document.getElementById("englishLyrics").value = data.english_lyrics || "";
+document.getElementById("mediaUrl").value = data.media_url || "";
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
